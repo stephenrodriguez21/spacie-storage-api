@@ -1,0 +1,47 @@
+service: spaciee-dev-service
+
+plugins:
+ - 'serverless-plugin-typescript'
+ - serverless-plugin-optimize
+ - serverless-offline
+ - serverless-ignore
+
+provider:
+ name: aws
+ runtime: nodejs16.x
+
+# package:
+#   exclude:
+#     - node_modules/**
+
+package:
+  include:
+    - 'dist/**/*'
+    - '!dist/**/*.map'
+    - '!node_modules/aws-sdk/**/*'
+
+custom:
+  serverless-offline:
+    httpPort: 3001
+    location: . # this is important to make serverless-offline use the current directory
+    functions:
+      main:
+        handler: src/lambda.handler # use the local entry point for serverless-offline
+  webpack:
+    includeModules: true
+    packager: 'npm'
+    excludeFiles: test/**/
+
+# functions:
+#  main: # The name of the lambda function
+#    # The module 'handler' is exported in the file 'src/lambda'
+#    handler: dist/lambda.handler
+#    environment:
+#     AUTH_JWT_SECRET: "SECRET"
+#     AUTH_JWT_TOKEN_EXPIRES_IN: "15m"
+#     REFRESH_JWT_SECRET: "secret_refresh_token"
+#     REFRESH_JWT_TOKEN_EXPIRES_IN: "1d"
+#    events:
+#      - http:
+#          method: any
+#          path: /{any+}
